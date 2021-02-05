@@ -5,7 +5,7 @@ variable "region" {
   default = "us-phoenix-1"
 }
 variable "bucket_namespace" {
-    default = "arp"
+    default = "toddrsharp"
 }
 variable "bucket_name" {
     default = "resource_manager_demo_bucket"

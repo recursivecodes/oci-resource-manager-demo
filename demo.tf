@@ -1,7 +1,11 @@
-variable "compartment_ocid" {}
-variable "region" {}
+variable "compartment_ocid" {
+  default = "ocid1.compartment.oc1..aaaaaaaa7lzppsdxt6j56zhpvy6u5gyrenwyc2e2h4fak5ydvv6kt7anizbq"
+}
+variable "region" {
+  default = "us-phoenix-1"
+}
 variable "bucket_namespace" {
-    default = "toddrsharp"
+    default = "arp"
 }
 variable "bucket_name" {
     default = "resource_manager_demo_bucket"

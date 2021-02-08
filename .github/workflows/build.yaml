@@ -6,8 +6,8 @@ on:
     tags:
       - "v*"
 jobs:
-  build-resource-manager:
-    name: Build Terraform
+  build-with-terraform:
+    name: Build With Terraform
     runs-on: ubuntu-latest
     
     steps:

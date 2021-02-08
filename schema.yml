@@ -44,3 +44,24 @@ variables:
     enum:
       - NoPublicAccess
       - PublicRead
+
+  "tenancy_ocid":
+    type: string
+    visible: false
+    required: false
+  "user_ocid":
+    type: string
+    visible: false
+    required: false
+  "fingerprint":
+    type: string
+    visible: false
+    required: false
+  "private_key":
+    type: string
+    visible: false
+    required: false
+  "private_key_password":
+    type: string
+    visible: false
+    required: false

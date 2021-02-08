@@ -1,6 +1,11 @@
 variable "compartment_ocid" {}
 variable "region" {}
 variable "bucket_name" {}
+variable "tenancy_ocid" {}
+variable "user_ocid" {}
+variable "fingerprint" {}
+variable "private_key" {}
+variable "private_key_paswword" {}
 
 provider "oci" {
   tenancy_ocid = var.tenancy_ocid

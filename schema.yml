@@ -61,7 +61,7 @@ variables:
     type: string
     visible: false
     required: false
-  "private_key_paswword":
+  "private_key_password":
     type: string
     visible: false
     required: false

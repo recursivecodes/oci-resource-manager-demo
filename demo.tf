@@ -1,18 +1,8 @@
 variable "compartment_ocid" {}
 variable "region" {}
 variable "bucket_name" {}
-variable "tenancy_ocid" {}
-variable "user_ocid" {}
-variable "fingerprint" {}
-variable "private_key" {}
-variable "private_key_password" {}
 
 provider "oci" {
-  tenancy_ocid = var.tenancy_ocid != null ? var.tenancy_ocid : null
-  user_ocid = var.user_ocid != null ? var.user_ocid : null
-  fingerprint = var.fingerprint != null ? var.fingerprint : null
-  private_key = var.private_key != null ? var.private_key : null
-  private_key_password = var.private_key_password != null ? var.private_key_password : null
   region = var.region
 }
 

@@ -1,0 +1,44 @@
+title: "Resource Manager Demo Stack"
+stackDescription: "A stack to demonstrate how to use Resource Manager in the Oracle Cloud."
+schemaVersion: 1.1.0
+version: "20200301"
+locale: "en"
+
+variableGroups:
+  - title: "Required Inputs"
+    variables:
+      - "compartment_ocid"
+      - "region"
+      - "bucket_name"
+      - "access_type"
+
+variables:
+  "compartment_ocid":
+    type: oci:identity:compartment:id
+    visible: true
+    required: true
+    title: "Compartment"
+    description: "The compartment to create the resources in."
+
+  "region":
+    type: oci:identity:region:name
+    visible: true
+    required: true
+    title: "Region"
+    description: "The region in which to create resources."
+
+  "bucket_name":
+    type: string
+    visible: true
+    required: true 
+    title: "Bucket Name"
+    description: "The name of the bucket to create."
+    pattern: "^(?=.*[^a-zA-Z0-9-_\.]).{1,256}"
+
+  "access_type":
+    type: enum
+    title: "Bucket Access Type"
+    default: "NoPublicAccess"
+    enum:
+      - NoPublicAccess
+      - PublicRead

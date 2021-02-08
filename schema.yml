@@ -33,7 +33,7 @@ variables:
     required: true 
     title: "Bucket Name"
     description: "The name of the bucket to create."
-    pattern: "^(?=.*[^a-zA-Z\\d-_\\.]).{1,256}$" 
+    pattern: "^([a-zA-Z\\d-_\\.]+)$" 
 
   "access_type":
     type: enum

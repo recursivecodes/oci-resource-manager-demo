@@ -5,14 +5,14 @@ variable "tenancy_ocid" {}
 variable "user_ocid" {}
 variable "fingerprint" {}
 variable "private_key" {}
-variable "private_key_paswword" {}
+variable "private_key_password" {}
 
 provider "oci" {
-  tenancy_ocid = var.tenancy_ocid
-  user_ocid = var.user_ocid
-  fingerprint = var.fingerprint
-  private_key = var.private_key
-  private_key_paswword = var.private_key_paswword
+  tenancy_ocid = var.tenancy_ocid != null ? var.tenancy_ocid : null
+  user_ocid = var.user_ocid != null ? var.user_ocid : null
+  fingerprint = var.fingerprint != null ? var.fingerprint : null
+  private_key = var.private_key != null ? var.private_key : null
+  private_key_password = var.private_key_password != null ? var.private_key_password : null
   region = var.region
 }
 
@@ -21,13 +21,10 @@ data "oci_objectstorage_namespace" "namespace" {
 }
 
 resource "oci_objectstorage_bucket" "create_bucket" {
-    # required
     compartment_id = var.compartment_ocid
     name = var.bucket_name
     namespace = data.oci_objectstorage_namespace.namespace.namespace
-
-    # optional
-    access_type = "NoPublicAccess" # <---- updated from "ObjectRead"
+    access_type = "NoPublicAccess"
 }
 
 output "new_bucket" {

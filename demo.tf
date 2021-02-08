@@ -1,6 +1,5 @@
 variable "compartment_ocid" {}
 variable "region" {}
-variable "bucket_namespace" {}
 variable "bucket_name" {}
 
 provider "oci" {

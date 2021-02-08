@@ -37,6 +37,8 @@ variables:
 
   "access_type":
     type: enum
+    visible: true
+    required: true
     title: "Bucket Access Type"
     default: "NoPublicAccess"
     enum:

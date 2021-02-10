@@ -74,7 +74,7 @@ jobs:
             --display-name "$STACK_NAME" \
             --terraform-version $TF_VERSION \
             --variables '{"compartment_ocid": "${{secrets.OCI_COMPARTMENT_OCID}}", "region": "${{env.REGION}}", "bucket_name": "${{env.BUCKET_NAME}}"}' \
-            --wait-for-state ACTIVE | jq '.data.id' -r)" >> $GITHUB_ENV
+            --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV
         
       - name: 'Create Plan Job'
         if: ${{env.STACK_ID != ''}}

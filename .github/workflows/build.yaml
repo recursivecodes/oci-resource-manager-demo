@@ -8,6 +8,9 @@ jobs:
     name: Build Resource Manager
     runs-on: ubuntu-latest
     env: 
+        SOURCE_PROVIDER_ID: ""
+        STACK_ID: ""
+        PLAN_JOB_ID: ""
         STACK_NAME: "OCI Resource Manager Demo Stack"
         PROVIDER_NAME: "GitHub Source Provider"
         BRANCH_NAME: "github-actions-resource-manager"

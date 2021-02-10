@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
       - name: 'Create Provider'
-        if: env.SOURCE_PROVIDER_ID == ''
+        if: !env.SOURCE_PROVIDER_ID
         run: |
           echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider create-github-access-token-provider \
             --access-token ${{secrets.GITHUB_ACCESS_TOKEN}} \
@@ -63,7 +63,7 @@ jobs:
             --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.id' -r)" >> $GITHUB_ENV
 
       - name: 'Create Stack'
-        if: env.STACK_ID
+        if: !env.STACK_ID
         run: |
           echo "STACK_ID=$(oci resource-manager stack create-from-git-provider \
             --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} \
@@ -76,7 +76,7 @@ jobs:
             --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV
         
       - name: 'Create Plan Job'
-        if: env.STACK_ID
+        if: !env.STACK_ID
         run: |
           echo "PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
             --stack-id $STACK_ID --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV

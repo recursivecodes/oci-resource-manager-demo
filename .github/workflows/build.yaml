@@ -30,8 +30,8 @@ jobs:
       
       - name: 'Terraform Plan'
         id: plan 
-        run: terraform plan -var 'compartment_ocid=${TF_VAR_compartment_ocid}' -var 'region=${TF_VAR_region}' -var 'bucket_name=${BUCKET_NAME}'
+        run: terraform plan -var 'compartment_ocid=$TF_VAR_compartment_ocid' -var 'region=$TF_VAR_region' -var 'bucket_name=$BUCKET_NAME'
 
       - name: 'Terraform Apply'
         id: apply 
-        run: terraform apply -var 'compartment_ocid=${TF_VAR_compartment_ocid}' -var 'region=${TF_VAR_region}' -var 'bucket_name=${BUCKET_NAME}'
+        run: terraform apply -var 'compartment_ocid=$TF_VAR_compartment_ocid' -var 'region=$TF_VAR_region' -var 'bucket_name=$BUCKET_NAME'

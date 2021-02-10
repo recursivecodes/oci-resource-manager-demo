@@ -8,9 +8,6 @@ jobs:
     name: Build Resource Manager
     runs-on: ubuntu-latest
     env: 
-        SOURCE_PROVIDER_ID: ""
-        STACK_ID: ""
-        PLAN_JOB_ID: ""
         STACK_NAME: "OCI Resource Manager Demo Stack"
         PROVIDER_NAME: "GitHub Source Provider"
         BRANCH_NAME: "github-actions-resource-manager"
@@ -66,7 +63,7 @@ jobs:
             --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.id' -r)" >> $GITHUB_ENV
 
       - name: 'Create Stack'
-        if: env.STACK_ID == ''
+        if: env.STACK_ID
         run: |
           echo "STACK_ID=$(oci resource-manager stack create-from-git-provider \
             --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} \
@@ -79,16 +76,16 @@ jobs:
             --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV
         
       - name: 'Create Plan Job'
-        if: env.STACK_ID != ''
+        if: env.STACK_ID
         run: |
           echo "PLAN_JOB_ID=$(oci resource-manager job create-plan-job \
-            --stack-id $STACK_ID --wait-for-state SUCCEEDED)" >> $GITHUB_ENV
+            --stack-id $STACK_ID --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV
    
       - name: 'Apply Plan Job'
-        if: env.PLAN_JOB_ID != '' 
+        if: env.PLAN_JOB_ID
         run: | 
           echo "APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
             --execution-plan-strategy FROM_PLAN_JOB_ID \
             --execution-plan-job-id $PLAN_JOB_ID \
             --stack-id $STACK_ID \
-            --wait-for-state SUCCEEDED)" >> $GITHUB_ENV
+            --wait-for-state SUCCEEDED | jq '.data.id' -r)" >> $GITHUB_ENV

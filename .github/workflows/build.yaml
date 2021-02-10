@@ -73,15 +73,11 @@ jobs:
             --config-source-configuration-source-provider-id $SOURCE_PROVIDER_ID \
             --config-source-branch-name $BRANCH_NAME \
             --config-source-repository-url $REPO_URL \
-            --display-name $STACK_NAME \
+            --display-name "$STACK_NAME" \
             --terraform-version $TF_VERSION \
             --variables \"{\"compartment_ocid\": \"${{secrets.OCI_COMPARTMENT_OCID}}\", \"region\": \"$REGION\", \"bucket_name\": \"$BUCKET_NAME\"}\"
             --wait-for-state SUCCEEDED)" >> $GITHUB_ENV
         
-      - name: 'Checkpoint'
-        run: | 
-          echo $SOURCE_PROVIDER_ID
-          echo $STACK_ID
       - name: 'Create Plan Job'
         if: env.STACK_ID != ''
         run: |

@@ -53,6 +53,7 @@ jobs:
       - name: 'Check Stack'
         run: |
           echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
+      
       - name: 'Create Provider'
         if: !env.SOURCE_PROVIDER_ID
         run: |

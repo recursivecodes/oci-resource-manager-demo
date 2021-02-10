@@ -3,13 +3,27 @@ on:
   push:
     branches:
       - github-actions-tf
-    tags:
-      - "v*"
 jobs:
   build-with-terraform:
     name: Build With Terraform
     runs-on: ubuntu-latest
     
     steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v1
+
+      - name: 'Init Terraform'
+        id: init
+        run: terraform init 
+
+      - name: 'Validate Terraform'
+        id: validate
+        run: terraform validate
+      
+      - name: 'Terraform Plan'
+        id: plan 
+        run: terraform plan
+
+      - name: 'Terraform Apply'
+        id: apply 
+        run: terraform apply

@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - github-actions-resource-manager
-    tags:
-      - "v*"
 jobs:
   build-resource-manager:
     name: Build Resource Manager

@@ -9,7 +9,79 @@ jobs:
   build-resource-manager:
     name: Build Resource Manager
     runs-on: ubuntu-latest
-    
+    env: 
+        STACK_NAME: "OCI Resource Manager Demo Stack"
+        PROVIDER_NAME: "GitHub Source Provider"
+        BRANCH_NAME: "github-actions-resource-manager"
+        REPO_URL: "https://github.com/recursivecodes/oci-resource-manager-demo"
+        TF_VERSION: "0.13.x"
+        REGION: "us-phoenix-1"
+        BUCKET_NAME: "test_bucket"
     steps:
+      
       - name: 'Checkout'
         uses: actions/checkout@v2
+
+      - name: 'Write Config & Key Files'
+        run: |
+          mkdir ~/.oci
+          echo "[DEFAULT]" >> ~/.oci/config
+          echo "user=${{secrets.OCI_USER_OCID}}" >> ~/.oci/config
+          echo "fingerprint=${{secrets.OCI_FINGERPRINT}}" >> ~/.oci/config
+          echo "pass_phrase=${{secrets.OCI_PASSPHRASE}}" >> ~/.oci/config
+          echo "region=${{secrets.OCI_REGION}}" >> ~/.oci/config
+          echo "tenancy=${{secrets.OCI_TENANCY_OCID}}" >> ~/.oci/config
+          echo "key_file=~/.oci/key.pem" >> ~/.oci/config
+          echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
+
+      - name: 'Install OCI CLI'
+        run: |
+          curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+          chmod +x install.sh
+          ./install.sh --accept-all-defaults
+          echo "/home/runner/bin" >> $GITHUB_PATH
+          exec -l $SHELL
+
+      - name: 'Fix OCI Config File Permissions'
+        run: |
+          oci setup repair-file-permissions --file /home/runner/.oci/config
+          oci setup repair-file-permissions --file /home/runner/.oci/key.pem
+
+      - name: 'Check Provider'
+        run: |
+          echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list --compartment-id ${{secrets.OCI_COMPARTMENT_ID}} | jq '.data.items[] | select(.\"display-name\"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
+
+      - name: 'Check Stack'
+        run: |
+          echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_ID}} | jq '.data[] | select(.\"display-name\"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
+      - name: 'Create Provider'
+        if: $SOURCE_PROVIDER_ID == ''
+        run: |
+          echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider create-github-access-token-provider --access-token ${{secrets.GITHUB_ACCESS_TOKEN}} --api-endpoint https://github.com/ --display-name $PROVIDER_NAME --compartment-id ${{secrets.OCI_COMPARTMENT_ID}} | jq '.data.id' -r)" >> $GITHUB_ENV
+
+      - name: 'Create Stack'
+        if: $STACK_ID == ''
+        run: |
+          echo "STACK_ID=$(oci resource-manager stack create-from-git-provider \
+            --compartment-id ${{secrets.OCI_COMPARTMENT_ID}} \
+            --config-source-configuration-source-provider-id $SOURCE_PROVIDER_ID \
+            --config-source-branch-name $BRANCH_NAME \
+            --config-source-repository-url $REPO_URL \
+            --display-name $STACK_NAME \
+            --terraform-version $TF_VERSION) \
+            --variables \"{\"compartment_ocid\": \"${{secrets.OCI_COMPARTMENT_ID}}\", \"region\": \"$REGION\", \"bucket_name\": \"$BUCKET_NAME\"}\"
+            --wait-for-state SUCCEEDED" >> $GITHUB_ENV
+        
+      - name: 'Create Plan Job'
+        if: $STACK_ID != ''
+        run: |
+          echo "PLAN_JOB_ID=$(oci resource-manager job create-plan-job --stack-i $STACK_ID --wait-for-state SUCCEEDED)" >> $GITHUB_ENV
+   
+      - name: 'Apply Plan Job'
+        if: $PLAN_JOB_ID != '' 
+        run: | 
+          echo "APPLY_JOB_ID=$(oci resource-manager job create-apply-job \
+            --execution-plan-strategy FROM_PLAN_JOB_ID \
+            --execution-plan-job-id $PLAN_JOB_ID \
+            --stack-id $STACK_ID) \
+            --wait-for-state SUCCEEDED" >> $GITHUB_ENV
